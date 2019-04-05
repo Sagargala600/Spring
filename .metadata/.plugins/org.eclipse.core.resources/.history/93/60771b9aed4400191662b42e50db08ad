@@ -1,0 +1,60 @@
+package com.example.demo;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class Controller {
+	
+	private static Map<String, User> Users = new HashMap<>();
+	
+	static {
+		User user = new User();
+		user.setId("1");
+		user.setName("Sagar");
+		Users.put(user.getId(), user);
+		
+		User user1 = new User();
+		user1.setId("2");
+		user1.setName("Gala");
+		Users.put(user1.getId(), user1);
+	}
+	
+	@RequestMapping(value = "/")
+	public ResponseEntity<Object> getProduct(){
+		return new ResponseEntity<>(Users.values(), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/", method = RequestMethod.POST)
+	   public ResponseEntity<Object> createProduct(@RequestBody User user) {
+	      Users.put(user.getId(), user);
+	      return new ResponseEntity<>("User is added successfully", HttpStatus.CREATED);
+	   }
+	
+	@RequestMapping(value = "/products/{id}", method = RequestMethod.PUT)
+	   public ResponseEntity<Object> updateProduct(@PathVariable("id") String id, @RequestBody User user) { 
+	      Users.remove(id);
+	      user.setId(id);
+	      Users.put(id, user);
+	      return new ResponseEntity<>("Users are updated successsfully", HttpStatus.OK);
+	   }
+	
+	@RequestMapping(value = "/products/{id}", method = RequestMethod.DELETE)
+	   public ResponseEntity<Object> delete(@PathVariable("id") String id) { 
+	      Users.remove(id);
+	      return new ResponseEntity<>("User is deleted successsfully", HttpStatus.OK);
+	   }
+
+}
